@@ -5,11 +5,12 @@ import { listarCategorias, criarCategoria } from '../api/categorias';
 export default function Categorias() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [descricao, setDescricao] = useState('');
-  const [finalidade, setFinalidade] = useState<Finalidade>('Despesa');
+  const [finalidade, setFinalidade] = useState<Finalidade>(0); // 0 = Despesa
 
   async function carregar() {
     try {
-      setCategorias(await listarCategorias());
+      const dados = await listarCategorias();
+      setCategorias(dados);
     } catch (e: any) {
       alert(e.message);
     }
@@ -22,13 +23,24 @@ export default function Categorias() {
     }
 
     try {
-      await criarCategoria({ descricao, finalidade });
+      await criarCategoria({
+        descricao,
+        finalidade, // número: 0 | 1 | 2
+      });
+
       setDescricao('');
-      setFinalidade('Despesa');
+      setFinalidade(0);
       carregar();
     } catch (e: any) {
       alert(e.message);
     }
+  }
+
+  function finalidadeTexto(valor: Finalidade) {
+    if (valor === 0) return 'Despesa';
+    if (valor === 1) return 'Receita';
+    if (valor === 2) return 'Ambas';
+    return '';
   }
 
   useEffect(() => {
@@ -47,11 +59,11 @@ export default function Categorias() {
 
       <select
         value={finalidade}
-        onChange={(e) => setFinalidade(e.target.value as Finalidade)}
+        onChange={(e) => setFinalidade(Number(e.target.value) as Finalidade)}
       >
-        <option value="Despesa">Despesa</option>
-        <option value="Receita">Receita</option>
-        <option value="Ambas">Ambas</option>
+        <option value={0}>Despesa</option>
+        <option value={1}>Receita</option>
+        <option value={2}>Ambas</option>
       </select>
 
       <button onClick={salvar}>Salvar</button>
@@ -59,7 +71,7 @@ export default function Categorias() {
       <ul>
         {categorias.map((c) => (
           <li key={c.id}>
-            {c.descricao} — {c.finalidade}
+            {c.descricao} — {finalidadeTexto(c.finalidade)}
           </li>
         ))}
       </ul>

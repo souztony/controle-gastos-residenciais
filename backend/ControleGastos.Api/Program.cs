@@ -1,5 +1,6 @@
 using ControleGastos.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization; // <- precisa desse using
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Serviços
 // ===============================
 
-// Habilita Controllers (Web API)
-builder.Services.AddControllers();
+// Habilita Controllers (Web API) com suporte a ciclos de referência
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true; // deixa JSON mais legível
+    });
 
 // Configuração do banco de dados SQLite
 // Isso cria e mantém o arquivo controle_gastos.db

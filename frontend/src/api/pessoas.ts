@@ -2,7 +2,7 @@ import { request } from './http';
 import type Pessoa from '../types/Pessoa';
 
 export function listarPessoas() {
-  return request<Pessoa[]>('/Pessoas');
+  return request<Pessoa[]>('/Pessoas').then(res => res || []);
 }
 
 export function criarPessoa(pessoa: Omit<Pessoa, 'id'>) {

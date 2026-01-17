@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
+
 import { listarTransacoes, criarTransacao } from '../api/transacoes';
 import { listarPessoas } from '../api/pessoas';
 import { listarCategorias } from '../api/categorias';
 
+import type { Transacao } from '../types/Transacao';
+import { TipoTransacao } from '../types/Transacao';
+
 import type Pessoa from '../types/Pessoa';
 import type { Categoria } from '../types/Categoria';
-import type { TipoTransacao, Transacao } from '../types/Transacao';
+import { Finalidade } from '../types/Categoria';
+
+const tipoTransacaoLabel: Record<TipoTransacao, string> = {
+  [TipoTransacao.Despesa]: 'Despesa',
+  [TipoTransacao.Receita]: 'Receita',
+};
 
 export default function Transacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
@@ -14,7 +23,7 @@ export default function Transacoes() {
 
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState<number>(0);
-  const [tipo, setTipo] = useState<TipoTransacao>('Despesa');
+  const [tipo, setTipo] = useState<TipoTransacao>(TipoTransacao.Despesa);
   const [pessoaId, setPessoaId] = useState<number>(0);
   const [categoriaId, setCategoriaId] = useState<number>(0);
 
@@ -29,13 +38,16 @@ export default function Transacoes() {
   }
 
   /**
-   * Filtra categorias conforme regra do negócio:
-   * - Se tipo = Despesa → aceita Despesa ou Ambas
-   * - Se tipo = Receita → aceita Receita ou Ambas
+   * Regras:
+   * - Despesa → Categoria Despesa ou Ambas
+   * - Receita → Categoria Receita ou Ambas
    */
   const categoriasPermitidas = categorias.filter((c) => {
-    if (tipo === 'Despesa') return c.finalidade !== 'Receita';
-    return c.finalidade !== 'Despesa';
+    if (tipo === TipoTransacao.Despesa) {
+      return c.finalidade !== Finalidade.Receita;
+    }
+
+    return c.finalidade !== Finalidade.Despesa;
   });
 
   async function salvar() {
@@ -49,7 +61,13 @@ export default function Transacoes() {
       return;
     }
 
+    if (!pessoaId || !categoriaId) {
+      alert('Pessoa e categoria são obrigatórias');
+      return;
+    }
+
     try {
+      // ✅ ENVIO CORRETO PARA O BACKEND (SEM "transacao")
       await criarTransacao({
         descricao,
         valor,
@@ -58,20 +76,14 @@ export default function Transacoes() {
         categoriaId,
       });
 
-      // Limpa formulário
       setDescricao('');
       setValor(0);
       setPessoaId(0);
       setCategoriaId(0);
+      setTipo(TipoTransacao.Despesa);
 
       carregar();
     } catch (e: any) {
-      /**
-       * Aqui entram as regras do backend:
-       * - Menor de idade só pode despesa
-       * - Categoria incompatível com tipo
-       * O backend retorna erro → mostramos ao usuário
-       */
       alert(e.message);
     }
   }
@@ -97,12 +109,18 @@ export default function Transacoes() {
         onChange={(e) => setValor(Number(e.target.value))}
       />
 
-      <select value={tipo} onChange={(e) => setTipo(e.target.value as TipoTransacao)}>
-        <option value="Despesa">Despesa</option>
-        <option value="Receita">Receita</option>
+      <select
+        value={tipo}
+        onChange={(e) => setTipo(Number(e.target.value) as TipoTransacao)}
+      >
+        <option value={TipoTransacao.Despesa}>Despesa</option>
+        <option value={TipoTransacao.Receita}>Receita</option>
       </select>
 
-      <select value={pessoaId} onChange={(e) => setPessoaId(Number(e.target.value))}>
+      <select
+        value={pessoaId}
+        onChange={(e) => setPessoaId(Number(e.target.value))}
+      >
         <option value={0}>Selecione a pessoa</option>
         {pessoas.map((p) => (
           <option key={p.id} value={p.id}>
@@ -111,7 +129,10 @@ export default function Transacoes() {
         ))}
       </select>
 
-      <select value={categoriaId} onChange={(e) => setCategoriaId(Number(e.target.value))}>
+      <select
+        value={categoriaId}
+        onChange={(e) => setCategoriaId(Number(e.target.value))}
+      >
         <option value={0}>Selecione a categoria</option>
         {categoriasPermitidas.map((c) => (
           <option key={c.id} value={c.id}>
@@ -127,7 +148,7 @@ export default function Transacoes() {
       <ul>
         {transacoes.map((t) => (
           <li key={t.id}>
-            {t.descricao} — {t.tipo} — R$ {t.valor.toFixed(2)}
+            {t.descricao} — {tipoTransacaoLabel[t.tipo]} — R$ {t.valor.toFixed(2)}
           </li>
         ))}
       </ul>

@@ -5,24 +5,42 @@ import { listarPessoas, criarPessoa, deletarPessoa } from '../api/pessoas';
 export default function Pessoas() {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [nome, setNome] = useState('');
-  const [idade, setIdade] = useState<number>(0);
+  const [idade, setIdade] = useState<number | ''>('');
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
   async function carregar() {
+    setLoading(true);
+    setErro(null);
     try {
-      setPessoas(await listarPessoas());
+      const dados = await listarPessoas();
+      setPessoas(dados || []);
     } catch (e: any) {
-      alert(e.message);
+      console.error(e);
+      setErro(e.message || 'Erro ao carregar pessoas');
+    } finally {
+      setLoading(false);
     }
   }
 
   async function salvar() {
+    if (!nome.trim()) {
+      alert('Informe o nome');
+      return;
+    }
+
+    if (idade === '') {
+      alert('Informe a idade');
+      return;
+    }
+
     try {
       await criarPessoa({ nome, idade });
       setNome('');
-      setIdade(0);
+      setIdade('');
       carregar();
     } catch (e: any) {
-      alert(e.message);
+      alert(e.message || 'Erro ao criar pessoa');
     }
   }
 
@@ -33,13 +51,16 @@ export default function Pessoas() {
       await deletarPessoa(id);
       carregar();
     } catch (e: any) {
-      alert(e.message);
+      alert(e.message || 'Erro ao deletar pessoa');
     }
   }
 
   useEffect(() => {
     carregar();
   }, []);
+
+  if (loading) return <p>Carregando pessoas...</p>;
+  if (erro) return <p style={{ color: 'red' }}>Erro: {erro}</p>;
 
   return (
     <div>
@@ -55,13 +76,15 @@ export default function Pessoas() {
         type="number"
         placeholder="Idade"
         value={idade}
-        onChange={(e) => setIdade(Number(e.target.value))}
+        onChange={(e) =>
+          setIdade(e.target.value === '' ? '' : Number(e.target.value))
+        }
       />
 
       <button onClick={salvar}>Salvar</button>
 
       <ul>
-        {pessoas.map((p) => (
+        {pessoas?.map((p) => (
           <li key={p.id}>
             {p.nome} ({p.idade} anos)
             <button onClick={() => remover(p.id)}>Excluir</button>

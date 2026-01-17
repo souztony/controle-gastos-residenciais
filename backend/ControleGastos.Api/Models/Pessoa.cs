@@ -1,21 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ControleGastos.Api.Models
 {
-    /// <summary>
-    /// Representa uma pessoa que pode possuir transações financeiras
-    /// </summary>
     public class Pessoa
     {
         public int Id { get; set; }
-
-        [Required]
-        public string Nome { get; set; } = string.Empty;
-
-        [Range(0, int.MaxValue)]
+        public string Nome { get; set; } = string.Empty; // inicializado para evitar warning
         public int Idade { get; set; }
 
-        // Relacionamento: uma pessoa pode ter várias transações
-        public ICollection<Transacao> Transacoes { get; set; } = new List<Transacao>();
+        [JsonIgnore] // evita ciclo de referência Pessoa -> Transacoes -> Pessoa
+        public List<Transacao> Transacoes { get; set; } = new List<Transacao>();
     }
 }
