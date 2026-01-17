@@ -15,5 +15,8 @@ namespace ControleGastos.Api.Models
 
         [Required]
         public FinalidadeCategoria Finalidade { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.List<Transacao> Transacoes { get; set; } = new System.Collections.Generic.List<Transacao>();
     }
 }

@@ -1,5 +1,5 @@
 export interface TotalPessoa {
-  pessoa: string;
+  nome: string;
   totalReceitas: number;
   totalDespesas: number;
   saldo: number;

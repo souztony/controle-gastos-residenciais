@@ -36,7 +36,7 @@ export default function TotaisPorPessoa() {
         <tbody>
           {pessoas.map((p, i) => (
             <tr key={i}>
-              <td>{p.pessoa}</td>
+              <td>{p.nome}</td>
               <td>{p.totalReceitas.toFixed(2)}</td>
               <td>{p.totalDespesas.toFixed(2)}</td>
               <td>{p.saldo.toFixed(2)}</td>

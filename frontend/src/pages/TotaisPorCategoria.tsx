@@ -36,7 +36,7 @@ export default function TotaisPorCategoria() {
         <tbody>
           {categorias.map((c, i) => (
             <tr key={i}>
-              <td>{c.pessoa}</td>
+              <td>{c.nome}</td>
               <td>{c.totalReceitas.toFixed(2)}</td>
               <td>{c.totalDespesas.toFixed(2)}</td>
               <td>{c.saldo.toFixed(2)}</td>

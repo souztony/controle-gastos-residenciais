@@ -53,5 +53,37 @@ namespace ControleGastos.Api.Controllers
                 TotalGeral = totalGeral
             });
         }
+        [HttpGet("categorias")]
+        public async Task<ActionResult> TotaisPorCategoria()
+        {
+            var categorias = await _context.Categorias
+                .Include(c => c.Transacoes)
+                .ToListAsync();
+
+            var resultado = categorias.Select(c => new RelatorioPessoaDto
+            {
+                PessoaId = c.Id,
+                Nome = c.Descricao,
+                TotalReceitas = c.Transacoes
+                    .Where(t => t.Tipo == TipoTransacao.Receita)
+                    .Sum(t => t.Valor),
+                TotalDespesas = c.Transacoes
+                    .Where(t => t.Tipo == TipoTransacao.Despesa)
+                    .Sum(t => t.Valor)
+            }).ToList();
+
+            var totalGeral = new
+            {
+                TotalReceitas = resultado.Sum(r => r.TotalReceitas),
+                TotalDespesas = resultado.Sum(r => r.TotalDespesas),
+                Saldo = resultado.Sum(r => r.Saldo)
+            };
+
+            return Ok(new
+            {
+                Categorias = resultado,
+                TotalGeral = totalGeral
+            });
+        }
     }
 }

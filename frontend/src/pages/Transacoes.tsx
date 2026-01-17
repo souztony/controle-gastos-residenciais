@@ -22,7 +22,7 @@ export default function Transacoes() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
 
   const [descricao, setDescricao] = useState('');
-  const [valor, setValor] = useState<number>(0);
+  const [valor, setValor] = useState<string>('');
   const [tipo, setTipo] = useState<TipoTransacao>(TipoTransacao.Despesa);
   const [pessoaId, setPessoaId] = useState<number>(0);
   const [categoriaId, setCategoriaId] = useState<number>(0);
@@ -56,7 +56,8 @@ export default function Transacoes() {
       return;
     }
 
-    if (valor <= 0) {
+    const valorNum = Number(valor);
+    if (!valor || valorNum <= 0) {
       alert('Valor deve ser maior que zero');
       return;
     }
@@ -70,14 +71,14 @@ export default function Transacoes() {
       // ✅ ENVIO CORRETO PARA O BACKEND (SEM "transacao")
       await criarTransacao({
         descricao,
-        valor,
+        valor: Number(valor),
         tipo,
         pessoaId,
         categoriaId,
       });
 
       setDescricao('');
-      setValor(0);
+      setValor('');
       setPessoaId(0);
       setCategoriaId(0);
       setTipo(TipoTransacao.Despesa);
@@ -106,7 +107,7 @@ export default function Transacoes() {
         type="number"
         placeholder="Valor"
         value={valor}
-        onChange={(e) => setValor(Number(e.target.value))}
+        onChange={(e) => setValor(e.target.value)}
       />
 
       <select
@@ -145,10 +146,10 @@ export default function Transacoes() {
 
       <hr />
 
-      <ul>
+      <ul style={{ listStyleType: 'none', padding: 0 }}>
         {transacoes.map((t) => (
-          <li key={t.id}>
-            {t.descricao} — {tipoTransacaoLabel[t.tipo]} — R$ {t.valor.toFixed(2)}
+          <li key={t.id} style={{ marginBottom: '8px', padding: '8px', borderBottom: '1px solid #ccc' }}>
+            {t.descricao ? `${t.descricao} — ` : ''}{tipoTransacaoLabel[t.tipo]} — {t.pessoa?.nome} — R$ {t.valor.toFixed(2)}
           </li>
         ))}
       </ul>

@@ -5,8 +5,8 @@ namespace ControleGastos.Api.Enums
     /// </summary>
     public enum FinalidadeCategoria
     {
-        Despesa = 1,
-        Receita = 2,
-        Ambas = 3
+        Despesa = 0,
+        Receita = 1,
+        Ambas = 2
     }
 }

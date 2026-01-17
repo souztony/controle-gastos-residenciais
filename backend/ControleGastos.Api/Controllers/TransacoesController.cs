@@ -63,10 +63,12 @@ namespace ControleGastos.Api.Controllers
 
                 if (categoria.Finalidade != FinalidadeCategoria.Ambas)
                 {
-                    if ((transacao.Tipo == TipoTransacao.Despesa && categoria.Finalidade != FinalidadeCategoria.Despesa) ||
-                        (transacao.Tipo == TipoTransacao.Receita && categoria.Finalidade != FinalidadeCategoria.Receita))
+                    bool isDespesaCompatible = (transacao.Tipo == TipoTransacao.Despesa && categoria.Finalidade == FinalidadeCategoria.Despesa);
+                    bool isReceitaCompatible = (transacao.Tipo == TipoTransacao.Receita && categoria.Finalidade == FinalidadeCategoria.Receita);
+
+                    if (!isDespesaCompatible && !isReceitaCompatible)
                     {
-                        return BadRequest("Categoria incompatível com o tipo da transação.");
+                        return BadRequest($"Categoria '{categoria.Descricao}' ({categoria.Finalidade}) não permite transações do tipo {transacao.Tipo}.");
                     }
                 }
 

@@ -20,13 +20,13 @@ namespace ControleGastos.Api.Models
         public int PessoaId { get; set; }
 
         // 'null!' diz ao compilador que EF vai preencher essa propriedade
-        public Pessoa Pessoa { get; set; } = null!;
+        public Pessoa? Pessoa { get; set; }
 
         [Required]
         public int CategoriaId { get; set; }
 
-        public Categoria Categoria { get; set; } = null!;
+        public Categoria? Categoria { get; set; }
 
-        public string? Observacao { get; set; }
+        public string? Descricao { get; set; }
     }
 }
