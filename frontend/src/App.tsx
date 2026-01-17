@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Pessoas from './pages/Pessoas';
+import Categorias from './pages/Categorias';
+import Transacoes from './pages/Transacoes';
+import TotaisPorPessoa from './pages/TotaisPorPessoa';
+import TotaisPorCategoria from './pages/TotaisPorCategoria';
+
+type Pagina =
+  | 'pessoas'
+  | 'categorias'
+  | 'transacoes'
+  | 'totaisPessoa'
+  | 'totaisCategoria';
+
+export default function App() {
+  const [pagina, setPagina] = useState<Pagina>('pessoas');
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div>
+      <nav style={{ marginBottom: 20 }}>
+        <button onClick={() => setPagina('pessoas')}>Pessoas</button>
+        <button onClick={() => setPagina('categorias')}>Categorias</button>
+        <button onClick={() => setPagina('transacoes')}>Transações</button>
+        <button onClick={() => setPagina('totaisPessoa')}>Totais por Pessoa</button>
+        <button onClick={() => setPagina('totaisCategoria')}>
+          Totais por Categoria
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      </nav>
 
-export default App
+      {pagina === 'pessoas' && <Pessoas />}
+      {pagina === 'categorias' && <Categorias />}
+      {pagina === 'transacoes' && <Transacoes />}
+      {pagina === 'totaisPessoa' && <TotaisPorPessoa />}
+      {pagina === 'totaisCategoria' && <TotaisPorCategoria />}
+    </div>
+  );
+}
