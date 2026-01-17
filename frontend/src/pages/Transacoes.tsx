@@ -3,9 +3,9 @@ import { listarTransacoes, criarTransacao } from '../api/transacoes';
 import { listarPessoas } from '../api/pessoas';
 import { listarCategorias } from '../api/categorias';
 
-import { Pessoa } from '../types/Pessoa';
-import { Categoria } from '../types/Categoria';
-import { TipoTransacao, Transacao } from '../types/Transacao';
+import type Pessoa from '../types/Pessoa';
+import type { Categoria } from '../types/Categoria';
+import type { TipoTransacao, Transacao } from '../types/Transacao';
 
 export default function Transacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);

@@ -1,5 +1,5 @@
 import { request } from './http';
-import { Transacao } from '../types/Transacao';
+import type { Transacao } from '../types/Transacao';
 
 export function listarTransacoes() {
   return request<Transacao[]>('/Transacoes');

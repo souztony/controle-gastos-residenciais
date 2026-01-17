@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Categoria, Finalidade } from '../types/Categoria';
+import type { Categoria, Finalidade } from '../types/Categoria';
 import { listarCategorias, criarCategoria } from '../api/categorias';
 
 export default function Categorias() {

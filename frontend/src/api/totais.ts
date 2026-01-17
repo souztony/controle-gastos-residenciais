@@ -1,5 +1,5 @@
 import { request } from './http';
-import { TotalPessoa, TotalGeral } from '../types/Totais';
+import type { TotalPessoa, TotalGeral } from '../types/Totais';
 
 export function totaisPorPessoa() {
   return request<{ pessoas: TotalPessoa[]; geral: TotalGeral }>('/Totais/Pessoas');

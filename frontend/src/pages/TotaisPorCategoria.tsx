@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { totaisPorCategoria } from '../api/totais';
-import { TotalPessoa, TotalGeral } from '../types/Totais';
+import type { TotalPessoa, TotalGeral } from '../types/Totais';
 
 export default function TotaisPorCategoria() {
   const [categorias, setCategorias] = useState<TotalPessoa[]>([]);

@@ -1,5 +1,5 @@
 import { request } from './http';
-import { Categoria } from '../types/Categoria';
+import type { Categoria } from '../types/Categoria';
 
 export function listarCategorias() {
   return request<Categoria[]>('/Categorias');

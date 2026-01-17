@@ -1,5 +1,5 @@
-export interface Pessoa {
-  id: number;
-  nome: string;
-  idade: number;
+export default interface Pessoa {
+  id: number
+  nome: string
+  idade: number
 }

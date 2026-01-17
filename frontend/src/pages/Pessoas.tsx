@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { Pessoa } from '../types/Pessoa'
+import type Pessoa from '../types/Pessoa';
 import { listarPessoas, criarPessoa, deletarPessoa } from '../api/pessoas';
 
 export default function Pessoas() {

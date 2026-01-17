@@ -1,5 +1,5 @@
 import { request } from './http';
-import { Pessoa } from '../types/Pessoa';
+import type Pessoa from '../types/Pessoa';
 
 export function listarPessoas() {
   return request<Pessoa[]>('/Pessoas');
