@@ -12,8 +12,21 @@ export async function request<T>(
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || 'Erro ao comunicar com a API');
+    let errorMessage = 'Erro ao comunicar com a API';
+
+    try {
+      const text = await response.text();
+      if (text) errorMessage = text;
+    } catch {
+      // resposta sem corpo
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  // ✅ CORREÇÃO PRINCIPAL
+  if (response.status === 204) {
+    return null as T;
   }
 
   return response.json();
