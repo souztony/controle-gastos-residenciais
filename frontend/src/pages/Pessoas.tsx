@@ -45,7 +45,7 @@ export default function Pessoas() {
   }
 
   async function remover(id: number) {
-    if (!confirm('Deseja realmente remover esta pessoa?')) return;
+    if (!confirm('Deseja realmente remover esta pessoa? Todas as transações vinculadas serão apagadas.')) return;
 
     try {
       await deletarPessoa(id);
@@ -59,38 +59,81 @@ export default function Pessoas() {
     carregar();
   }, []);
 
-  if (loading) return <p>Carregando pessoas...</p>;
-  if (erro) return <p style={{ color: 'red' }}>Erro: {erro}</p>;
-
   return (
     <div>
-      <h2>Pessoas</h2>
+      <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ background: 'var(--primary)', color: 'white', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center', fontSize: '1rem' }}>P</span>
+        Gerenciamento de Pessoas
+      </h2>
 
-      <input
-        placeholder="Nome"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-      />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '1rem', marginBottom: '2rem', alignItems: 'end' }}>
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Nome Completo</label>
+          <input
+            placeholder="Ex: João Silva"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
+        </div>
 
-      <input
-        type="number"
-        placeholder="Idade"
-        value={idade}
-        onChange={(e) =>
-          setIdade(e.target.value === '' ? '' : Number(e.target.value))
-        }
-      />
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Idade</label>
+          <input
+            type="number"
+            placeholder="0"
+            value={idade}
+            onChange={(e) =>
+              setIdade(e.target.value === '' ? '' : Number(e.target.value))
+            }
+          />
+        </div>
 
-      <button onClick={salvar}>Salvar</button>
+        <button className="btn-primary" onClick={salvar} style={{ height: '46px' }}>
+          Adicionar Pessoa
+        </button>
+      </div>
 
-      <ul>
-        {pessoas?.map((p) => (
-          <li key={p.id}>
-            {p.nome} ({p.idade} anos)
-            <button onClick={() => remover(p.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Carregando dados...</div>
+      ) : erro ? (
+        <div className="glass-card" style={{ borderColor: 'var(--danger)', color: 'var(--danger)' }}>Erro: {erro}</div>
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr>
+                <th>NOME</th>
+                <th>IDADE</th>
+                <th>STATUS</th>
+                <th style={{ textAlign: 'right' }}>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pessoas?.map((p) => (
+                <tr key={p.id}>
+                  <td className="text-bold">{p.nome}</td>
+                  <td>{p.idade} anos</td>
+                  <td>
+                    <span className={`badge ${p.idade >= 18 ? 'badge-income' : 'badge-expense'}`} style={{ textTransform: 'none' }}>
+                      {p.idade >= 18 ? 'Adulto' : 'Menor de Idade'}
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    <button className="btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => remover(p.id)}>
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {pessoas.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+              Nenhuma pessoa cadastrada.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -6,13 +6,17 @@ export default function Categorias() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [descricao, setDescricao] = useState('');
   const [finalidade, setFinalidade] = useState<Finalidade>(0); // 0 = Despesa
+  const [loading, setLoading] = useState(true);
 
   async function carregar() {
+    setLoading(true);
     try {
       const dados = await listarCategorias();
-      setCategorias(dados);
+      setCategorias(dados || []);
     } catch (e: any) {
-      alert(e.message);
+      alert(e.message || 'Erro ao carregar categorias');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -25,14 +29,14 @@ export default function Categorias() {
     try {
       await criarCategoria({
         descricao,
-        finalidade, // número: 0 | 1 | 2
+        finalidade,
       });
 
       setDescricao('');
       setFinalidade(0);
       carregar();
     } catch (e: any) {
-      alert(e.message);
+      alert(e.message || 'Erro ao criar categoria');
     }
   }
 
@@ -49,32 +53,71 @@ export default function Categorias() {
 
   return (
     <div>
-      <h2>Categorias</h2>
+      <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ background: 'var(--primary)', color: 'white', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>C</span>
+        Categorias de Transação
+      </h2>
 
-      <input
-        placeholder="Descrição"
-        value={descricao}
-        onChange={(e) => setDescricao(e.target.value)}
-      />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '1rem', marginBottom: '2rem', alignItems: 'end' }}>
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Descrição</label>
+          <input
+            placeholder="Ex: Alimentação, Salário..."
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
+        </div>
 
-      <select
-        value={finalidade}
-        onChange={(e) => setFinalidade(Number(e.target.value) as Finalidade)}
-      >
-        <option value={0}>Despesa</option>
-        <option value={1}>Receita</option>
-        <option value={2}>Ambas</option>
-      </select>
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Finalidade</label>
+          <select
+            value={finalidade}
+            onChange={(e) => setFinalidade(Number(e.target.value) as Finalidade)}
+          >
+            <option value={0}>Despesa</option>
+            <option value={1}>Receita</option>
+            <option value={2}>Ambas (Receita e Despesa)</option>
+          </select>
+        </div>
 
-      <button onClick={salvar}>Salvar</button>
+        <button className="btn-primary" onClick={salvar} style={{ height: '46px' }}>
+          Adicionar Categoria
+        </button>
+      </div>
 
-      <ul>
-        {categorias.map((c) => (
-          <li key={c.id}>
-            {c.descricao} — {finalidadeTexto(c.finalidade)}
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Carregando dados...</div>
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr>
+                <th>DESCRIÇÃO</th>
+                <th>FINALIDADE</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categorias.map((c) => (
+                <tr key={c.id}>
+                  <td className="text-bold">{c.descricao}</td>
+                  <td>{finalidadeTexto(c.finalidade)}</td>
+                  <td>
+                    <span className={`badge ${c.finalidade === 0 ? 'badge-expense' : 'badge-income'}`} style={{ opacity: c.finalidade === 2 ? 0.8 : 1 }}>
+                      Válido
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {categorias.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+              Nenhuma categoria cadastrada.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

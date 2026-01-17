@@ -5,13 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControleGastos.Api.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pelo gerenciamento de pessoas no sistema.
+    /// Permite a criação, listagem e exclusão de registros.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class PessoasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        // O DbContext é injetado automaticamente pelo .NET
+        /// <summary>
+        /// O DbContext é injetado automaticamente pelo sistema de injeção de dependências do .NET.
+        /// </summary>
         public PessoasController(ApplicationDbContext context)
         {
             _context = context;

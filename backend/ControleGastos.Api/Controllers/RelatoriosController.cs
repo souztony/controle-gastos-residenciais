@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControleGastos.Api.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerar relatórios financeiros agregados.
+    /// Fornece visões de totais por pessoa e por categoria.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class RelatoriosController : ControllerBase
